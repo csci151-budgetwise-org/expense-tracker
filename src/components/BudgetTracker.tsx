@@ -16,36 +16,35 @@ export default function BudgetTracker({ expenses, budget, onSetBudget }: BudgetT
   const remaining = budget - totalSpent;
   const pct = budget > 0 ? Math.min((totalSpent / budget) * 100, 100) : 0;
 
+  // Formatting Helper
+  const formatCurrency = (val: number) => 
+    new Intl.NumberFormat('en-PH', { 
+      style: 'currency', 
+      currency: 'PHP',
+      minimumFractionDigits: 2 
+    }).format(val);
+
   const getBarColor = () => {
-    if (pct >= 100) return 'bg-red-500';
-    if (pct >= 80) return 'bg-orange-400';
-    if (pct >= 60) return 'bg-yellow-500';
-    return 'bg-emerald-400';
+    if (pct >= 100) return 'bg-rose-500';
+    if (pct >= 85) return 'bg-amber-500';
+    if (pct >= 60) return 'bg-blue-500';
+    return 'bg-emerald-500';
   };
 
   const getStatusColor = () => {
-    if (remaining < 0) return 'text-red-500';
-    if (pct >= 80) return 'text-orange-500';
+    if (remaining < 0) return 'text-rose-600';
+    if (pct >= 85) return 'text-amber-600';
     return 'text-emerald-600';
-  };
-
-  const getStatusLabel = () => {
-    if (remaining < 0) return `Over budget by ₱${Math.abs(remaining).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
-    if (pct >= 80) return 'Approaching limit';
-    if (pct >= 60) return 'Spending moderately';
-    return 'On track';
   };
 
   const handleSave = () => {
     const val = parseFloat(inputValue);
     if (isNaN(val) || val <= 0) {
-      setError('Enter a valid budget greater than 0');
+      setError('Enter a valid amount');
       return;
     }
     onSetBudget(val);
-    setInputValue('');
-    setEditing(false);
-    setError('');
+    handleCancel();
   };
 
   const handleCancel = () => {
@@ -55,109 +54,115 @@ export default function BudgetTracker({ expenses, budget, onSetBudget }: BudgetT
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-zinc-100 p-6">
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-lg font-semibold text-zinc-800">Monthly Budget</h2>
+    <div className="bg-white rounded-3xl shadow-sm border border-zinc-200 overflow-hidden">
+      {/* Header Section */}
+      <div className="px-6 py-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
+        <div>
+          <h2 className="text-base font-bold text-zinc-800">Budget Overview</h2>
+          <p className="text-xs text-zinc-500">Track your monthly spending limit</p>
+        </div>
         {!editing && (
           <button
-            onClick={() => { setEditing(true); setInputValue(budget > 0 ? String(budget) : ''); }}
-            className="text-xs text-indigo-600 hover:text-indigo-700 font-medium transition"
+            onClick={() => { setEditing(true); setInputValue(String(budget)); }}
+            className="px-3 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-full transition-all active:scale-95"
           >
-            {budget > 0 ? 'Edit' : 'Set Budget'}
+            {budget > 0 ? 'Edit Limit' : 'Set Limit'}
           </button>
         )}
       </div>
 
-      {editing && (
-        <div className="mb-5">
-          <label className="block text-sm font-medium text-zinc-600 mb-1.5">Monthly Budget (₱)</label>
-          <div className="flex gap-2">
-            <input
-              type="number"
-              value={inputValue}
-              onChange={(e) => { setInputValue(e.target.value); setError(''); }}
-              placeholder="e.g. 10000"
-              min="0"
-              step="0.01"
-              className={`flex-1 px-3 py-2.5 rounded-lg border text-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition ${
-                error ? 'border-red-400 bg-red-50' : 'border-zinc-200'
-              }`}
-              autoFocus
-              onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') handleCancel(); }}
-            />
-            <button
-              onClick={handleSave}
-              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition"
-            >
-              Save
-            </button>
-            <button
-              onClick={handleCancel}
-              className="px-4 py-2.5 border border-zinc-200 hover:bg-zinc-50 text-zinc-500 text-sm rounded-lg transition"
-            >
-              Cancel
-            </button>
+      <div className="p-6">
+        {editing ? (
+          <div className="animate-in fade-in zoom-in-95 duration-200">
+            <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Configure Monthly Limit</label>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm font-medium">₱</span>
+                <input
+                  type="number"
+                  value={inputValue}
+                  onChange={(e) => { setInputValue(e.target.value); setError(''); }}
+                  className={`w-full pl-7 pr-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                    error ? 'border-rose-400 bg-rose-50 ring-rose-100' : 'border-zinc-200 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500'
+                  }`}
+                  autoFocus
+                />
+              </div>
+              <button onClick={handleSave} className="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-zinc-200 active:scale-95">
+                Save
+              </button>
+              <button onClick={handleCancel} className="px-4 py-2.5 bg-white border border-zinc-200 text-zinc-600 text-sm font-bold rounded-xl hover:bg-zinc-50 transition-all">
+                Close
+              </button>
+            </div>
+            {error && <p className="mt-2 text-xs font-medium text-rose-500 flex items-center gap-1"><span>info</span> {error}</p>}
           </div>
-          {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
-        </div>
-      )}
-
-      {budget === 0 ? (
-        <div className="py-8 text-center text-sm text-zinc-400">
-          No budget set. Click "Set Budget" to get started.
-        </div>
-      ) : (
-        <>
-          {/* Stats row */}
-          <div className="grid grid-cols-3 gap-3 mb-5">
-            <div className="text-center p-3 bg-zinc-50 rounded-xl">
-              <p className="text-xs text-zinc-400 mb-1">Budget</p>
-              <p className="text-sm font-semibold text-zinc-700">
-                ₱{budget.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
-              </p>
+        ) : budget === 0 ? (
+          <div className="py-6 flex flex-col items-center justify-center border-2 border-dashed border-zinc-100 rounded-2xl">
+            <div className="w-10 h-10 bg-zinc-50 rounded-full flex items-center justify-center mb-3">
+               <span className="text-zinc-400">₱</span>
             </div>
-            <div className="text-center p-3 bg-zinc-50 rounded-xl">
-              <p className="text-xs text-zinc-400 mb-1">Spent</p>
-              <p className="text-sm font-semibold text-zinc-700">
-                ₱{totalSpent.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
-              </p>
-            </div>
-            <div className="text-center p-3 bg-zinc-50 rounded-xl">
-              <p className="text-xs text-zinc-400 mb-1">Remaining</p>
-              <p className={`text-sm font-semibold ${getStatusColor()}`}>
-                {remaining < 0 ? '-' : ''}₱{Math.abs(remaining).toLocaleString('en-PH', { minimumFractionDigits: 2 })}
-              </p>
-            </div>
+            <p className="text-sm text-zinc-500 font-medium">No spending limit defined yet</p>
           </div>
+        ) : (
+          <div className="animate-in fade-in duration-500">
+            {/* Main Stats Grid */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-100">
+                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Total Spent</p>
+                <p className="text-lg font-black text-zinc-800">{formatCurrency(totalSpent)}</p>
+              </div>
+              <div className={`p-4 rounded-2xl border ${remaining < 0 ? 'bg-rose-50 border-rose-100' : 'bg-emerald-50 border-emerald-100'}`}>
+                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Remaining</p>
+                <p className={`text-lg font-black ${getStatusColor()}`}>
+                  {formatCurrency(remaining)}
+                </p>
+              </div>
+            </div>
 
-          {/* Progress bar */}
-          <div className="mb-3">
-            <div className="flex justify-between text-xs text-zinc-400 mb-1.5">
-              <span>{pct.toFixed(1)}% used</span>
-              <span className={`font-medium ${getStatusColor()}`}>{getStatusLabel()}</span>
+            {/* Visual Progress Section */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-end">
+                <div>
+                   <span className="text-2xl font-black text-zinc-800">{pct.toFixed(0)}%</span>
+                   <span className="text-xs font-bold text-zinc-400 ml-1">OF {formatCurrency(budget)}</span>
+                </div>
+                <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${
+                  remaining < 0 ? 'bg-rose-100 text-rose-700' : 'bg-zinc-100 text-zinc-600'
+                }`}>
+                  {remaining < 0 ? 'Limit Exceeded' : 'Active Budget'}
+                </span>
+              </div>
+              
+              <div className="relative h-4 bg-zinc-100 rounded-full overflow-hidden shadow-inner">
+                <div
+                  className={`h-full rounded-full transition-all duration-1000 ease-out shadow-sm ${getBarColor()}`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              
+              <div className="flex justify-between items-center text-[10px] font-bold text-zinc-400 tracking-tighter uppercase">
+                <span>0% started</span>
+                <span>{pct >= 100 ? 'Limit Reached' : 'Monthly Limit'}</span>
+              </div>
             </div>
-            <div className="h-3 bg-zinc-100 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-700 ${getBarColor()}`}
-                style={{ width: `${pct}%` }}
-              />
-            </div>
+
+            {/* Warning logic integrated into a cleaner callout */}
+            {pct >= 85 && (
+              <div className={`mt-6 p-3 rounded-xl flex items-start gap-3 border animate-bounce-subtle ${
+                remaining < 0 ? 'bg-rose-50 border-rose-100 text-rose-800' : 'bg-amber-50 border-amber-100 text-amber-800'
+              }`}>
+                <span className="text-base">⚠️</span>
+                <p className="text-xs font-semibold leading-relaxed">
+                  {remaining < 0 
+                    ? `Over-budget by ${formatCurrency(Math.abs(remaining))}. Consider reviewing your expenses.` 
+                    : `Attention: You've used ${pct.toFixed(1)}% of your budget.`}
+                </p>
+              </div>
+            )}
           </div>
-
-          {/* Warning alert */}
-          {pct >= 80 && (
-            <div className={`mt-4 px-4 py-2.5 rounded-lg text-sm ${
-              remaining < 0
-                ? 'bg-red-50 border border-red-200 text-red-700'
-                : 'bg-orange-50 border border-orange-200 text-orange-700'
-            }`}>
-              {remaining < 0
-                ? '⚠️ You have exceeded your monthly budget.'
-                : '⚠️ You are approaching your monthly budget limit.'}
-            </div>
-          )}
-        </>
-      )}
+        )}
+      </div>
     </div>
   );
 }
