@@ -12,6 +12,7 @@ interface EditExpenseModalProps {
 export default function EditExpenseModal({ expense, onSave, onDelete, onClose }: EditExpenseModalProps) {
 
   const [form, setForm] = useState({ category: '', amount: '', date: '', description: '' });
+  const [errors, setErrors] = useState<Partial<typeof form>>({});
 
   useEffect(() => {
     if (expense) {
@@ -26,9 +27,33 @@ export default function EditExpenseModal({ expense, onSave, onDelete, onClose }:
   
   if (!expense) return null;
 
+  const validate = () => {
+    const newErrors: Partial<typeof form> = {};
+    if (!form.amount || isNaN(Number(form.amount)) || Number(form.amount) <= 0)
+      newErrors.amount = 'Enter a valid amount greater than 0';
+    if (!form.date) newErrors.date = 'Date is required';
+    if (!form.description.trim()) newErrors.description = 'Description is required';
+    return newErrors;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    onSave({
+      id: expense.id,
+      category: form.category,
+      amount: parseFloat(form.amount),
+      date: form.date,
+      description: form.description.trim(),
+    });
   };
 
   return (
@@ -74,7 +99,7 @@ export default function EditExpenseModal({ expense, onSave, onDelete, onClose }:
         {/* Footer */}
         <div className="px-6 py-4 border-t border-zinc-100 flex justify-end gap-2">
           <button onClick={onClose} className="px-4 py-2 text-sm text-zinc-500 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition">Cancel</button>
-          <button className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Save Changes</button>
+          <button onClick={handleSave} className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Save Changes</button>
         </div>
       </div>
     </div>
