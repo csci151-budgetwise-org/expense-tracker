@@ -13,7 +13,6 @@ export default function AddExpense({ onAdd }: AddExpenseProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!description || !amount || !date) return;
 
     onAdd({
@@ -23,7 +22,6 @@ export default function AddExpense({ onAdd }: AddExpenseProps) {
       date,
     });
 
-    // Reset form
     setDescription('');
     setAmount('');
     setCategory('Food');
@@ -31,35 +29,61 @@ export default function AddExpense({ onAdd }: AddExpenseProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Add New Expense</h2>
+    <form onSubmit={handleSubmit} className="border p-4 rounded bg-white shadow flex flex-col gap-3">
+      <h2 className="text-xl font-bold mb-2 text-gray-800">Add New Expense</h2>
       
-      <input 
-        value={description} 
-        onChange={(e) => setDescription(e.target.value)} 
-        type="text" 
-      />
+      <div>
+        <label className="block text-sm font-medium text-gray-600">Description</label>
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-blue-400 outline-none"
+        />
+      </div>
 
-      <input 
-        value={amount} 
-        onChange={(e) => setAmount(e.target.value)} 
-        type="number" 
-      />
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-600">Amount</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-blue-400 outline-none"
+          />
+        </div>
 
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        <option value="Food">Food</option>
-        <option value="Transport">Transport</option>
-        <option value="Bills">Bills</option>
-        <option value="Shopping">Shopping</option>
-      </select>
+        <div>
+          <label className="block text-sm font-medium text-gray-600">Category</label>
+          <select 
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full border p-2 rounded mt-1 bg-white focus:ring-2 focus:ring-blue-400 outline-none"
+          >
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Bills">Bills</option>
+            <option value="Shopping">Shopping</option>
+          </select>
+        </div>
+      </div>
 
-      <input 
-        value={date} 
-        onChange={(e) => setDate(e.target.value)} 
-        type="date" 
-      />
+      <div>
+        <label className="block text-sm font-medium text-gray-600">Date</label>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-blue-400 outline-none"
+        />
+      </div>
 
-      <button type="submit">Save Expense</button>
+      <button 
+        type="submit" 
+        className="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-600 transition-colors font-semibold"
+      >
+        Save Expense
+      </button>
     </form>
   );
 }
