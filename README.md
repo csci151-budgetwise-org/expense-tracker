@@ -8,23 +8,23 @@ A personal finance management application that helps users track expenses, manag
 
 | Full Name | Role | GitHub Username | Assigned Atomic Task |
 |-----------|------|-----------------|---------------------|
-| Caballes, Ervin James | Developer | @username | [Fill in specific tasks/features assigned] |
-| Dejos, Pauline | Developer | @username | [Fill in specific tasks/features assigned] |
-| Jimeno, Ken Cedrick | Developer | @username | [Fill in specific tasks/features assigned] |
-| Ortula, Jebron | Developer | @username | [Fill in specific tasks/features assigned] |
-| Piangco, Pete Alexander | Developer | @username | [Fill in specific tasks/features assigned] |
+| Caballes, Ervin James | UI/UX Integrator | caballeservinjames889-maker |  |
+| Dejos, Pauline | Project Lead | repromantics01 | App Wiring & CategorySummary |
+| Jimeno, Ken Cedrick | QA Specialist | devcedrick | Form Validation |
+| Ortula, Jebron | Documentation Lead | Jebzzzzz | README.md Setup & EditExpense |
+| Piangco, Pete Alexander | Lead Developer | filch119 | Form Validation & AddExpense Form |
 
 ---
 
 ## Features Implemented
 
-- [ ] Add Expense - Record expenses with category, amount, date
-- [ ] Expense List - Display all expenses
-- [ ] Filter by Category - View by Food, Transport, Bills, Shopping
-- [ ] Category Summary - Total spending per category
-- [ ] Budget Tracking - Set budget and show remaining amount
-- [ ] Edit Expense - Modify expense details
-- [ ] Delete Expense - Remove expenses with confirmation
+- [ x ] Add Expense - Record expenses with category, amount, date
+- [ x ] Expense List - Display all expenses
+- [ x ] Filter by Category - View by Food, Transport, Bills, Shopping
+- [ x ] Category Summary - Total spending per category
+- [ x ] Budget Tracking - Set budget and show remaining amount
+- [ x ] Edit Expense - Modify expense details
+- [ x ] Delete Expense - Remove expenses with confirmation
 - [ ] [Add any additional features implemented]
 
 ---
@@ -51,18 +51,18 @@ A personal finance management application that helps users track expenses, manag
 
 1. **Clone the repository**
    ```bash
-   [Write the command to clone the repository]
-   [Write the command to navigate to the project directory]
+   git clone https://github.com/csci151-budgetwise-org/expense-tracker.git
+   cd expense-tracker
    ```
 
 2. **Install dependencies**
    ```bash
-   [Write the command to install project dependencies]
+   npm install
    ```
 
 3. **Run the development server**
    ```bash
-   [Write the command to start the development server]
+   npm run dev
    ```
 
 4. **Open your browser**
@@ -77,15 +77,43 @@ A personal finance management application that helps users track expenses, manag
 
 - **`main`** - Production-ready code
 - **`develop`** - Integration branch
-- **`feature/add-expense`** - [Description]
-- **`feature/category-summary`** - [Description]
-- **`feature/budget-tracking`** - [Description]
-- **`feature/expense-filter`** - [Description]
-- **`feature/edit-delete`** - [Description]
+- **`feature/add-expense`** - Implementation of the form and logic to record new expenses, capturing the category, amount, date, and description.
+- **`feature/category-summary`** - Development of the UI to calculate and display total accumulated spending broken down per category
+- **`feature/budget-tracking`** - Addition of functionality to set a monthly budget limit and dynamically show the remaining amount based on total expenses.
+- **`feature/expense-filter`** - Creation of the main expense list view with capabilities to display all records and filter them by specific categories (e.g., Food, Transport, Bills).
+- **`feature/edit-delete`** - Integration of the ability to modify existing expense details and a safe deletion flow that includes a user confirmation prompt.
 
 ### Merge Conflicts Resolved
+![alt text](src/assets/conflict1.png)
 
-[Document conflicts here]
+[cite_start]Here is a description of merge conflicts and how they were resolved, formatted specifically for your README documentation requirements[cite: 259].
+
+### What is a Merge Conflict?
+A merge conflict occurs when Git is unable to automatically combine changes from two different branches. [cite_start]This usually happens when two developers edit the same lines in the same file, or if one developer deletes a file while another modifies it[cite: 88]. [cite_start]When this happens, Git pauses the merge process and injects conflict markers (e.g., `<<<<<<<< HEAD`, `=======`, `>>>>>>>>`) into the affected files, requiring a developer to manually choose which code to keep[cite: 89, 91, 93].
+
+### Standard Resolution Process
+[cite_start]According to our team's Git Rules[cite: 87], we follow these steps to resolve conflicts:
+1. [cite_start]**Understand Intent:** Read both versions of the code to understand the purpose behind each change[cite: 95].
+2. [cite_start]**Manually Edit:** Edit the file to reflect the correct final state[cite: 96].
+3. [cite_start]**Clean Up:** Remove all Git conflict markers (`<<<<<<<<`, `=======`, `>>>>>>>>`)[cite: 97, 100].
+4. [cite_start]**Stage:** Run `git add <file>` to stage the resolved file[cite: 98].
+5. [cite_start]**Commit:** Commit the resolution to finalize the merge[cite: 99].
+
+---
+
+### Documented Merge Conflicts
+
+#### Conflict 1: Styling Updates in BudgetTracker
+* **File:** `src/components/BudgetTracker.tsx`
+* **What Happened:** The `develop` branch contained older color semantics for the budget progress bar (e.g., `bg-rose-500`, `bg-blue-500`). Meanwhile, the `fix/color-semantics` branch introduced an updated, warmer color palette (`bg-red-500`, `bg-orange-400`, `bg-yellow-400`) and slightly adjusted the percentage thresholds within the `getBarColor` function.
+* **How it was Resolved:** We reviewed the changes and decided that the updates from the `fix/color-semantics` branch were the correct and most recent design choices. We used the VS Code merge editor to accept the incoming changes from the fix branch, ensuring the new `bg-red-500` through `bg-emerald-400` classes were retained.
+
+
+![alt text](src/assets/conflict2.png)
+#### Conflict 2: Component Overhaul in EditExpense
+* **File:** `src/components/EditExpense.tsx`
+* **What Happened:** The `develop` branch had a basic `EditExpense` component that only accepted an `onEditSubmit` prop. The `feature/edit-delete` branch completely overhauled this file, renaming the interface to `EditExpenseModalProps`, adding new props (`onSave`, `onDelete`, `onClose`), and introducing complex state management (`form`, `errors`, `confirmDelete`) using `useState` and `useEffect`.
+* **How it was Resolved:** Since the `feature/edit-delete` branch contained the completed feature requirement, we accepted the heavily modified version from that branch. As seen in the terminal, the resolved file was staged using `git add src/components/EditExpense.tsx` and finalized with the commit message `"feat: Add delete confirmation flow to edit modal"`.
 
 ---
 
@@ -100,11 +128,11 @@ A personal finance management application that helps users track expenses, manag
 
 **Group 6 - CSci 151 Event Driven Programming**
 
-- Caballes, Ervin James - @username
-- Dejos, Pauline - @username
-- Jimeno, Ken Cedrick - @username
-- Ortula, Jebron - @username
-- Piangco, Pete Alexander - @username
+- Caballes, Ervin James - caballeservinjames889-maker
+- Dejos, Pauline - repromantics01
+- Jimeno, Ken Cedrick - devcedrick
+- Ortula, Jebron - Jebzzzzz
+- Piangco, Pete Alexander - filch119
 
 **Course Professors:**
 - Mr. Jomari Joseph A. Barrera
@@ -114,4 +142,4 @@ A personal finance management application that helps users track expenses, manag
 
 ---
 
-**Last Updated:** [Date]
+**Last Updated:** [10/04/2026]
