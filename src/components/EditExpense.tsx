@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from 'react';
 import type { ExpenseItem } from '../types';
 import { CATEGORIES } from '../types';

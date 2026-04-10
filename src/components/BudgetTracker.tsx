@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ExpenseItem } from '../types/expense';
+import type { ExpenseItem } from '../types';
 
 interface BudgetTrackerProps {
   expenses: ExpenseItem[];
