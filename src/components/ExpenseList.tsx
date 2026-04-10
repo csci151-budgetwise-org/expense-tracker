@@ -34,15 +34,21 @@ export default function ExpenseList({
   };
 
   return (
-    <div className="border p-4 rounded bg-white shadow">
+    <div className="rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden">
       {/* Header with title and filter dropdown */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Expenses</h2>
+      <div className="flex justify-between items-center px-5 py-4 bg-linear-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+        <div>
+          <h2 className="text-xl font-bold text-gray-800">Expenses</h2>
+          <p className="text-xs text-gray-400 mt-0.5">
+            Showing {filteredExpenses.length} of {expenses.length} expense
+            {expenses.length !== 1 ? "s" : ""}
+          </p>
+        </div>
         <select
           id="category-filter"
           value={filterCategory}
           onChange={(e) => onFilterChange(e.target.value)}
-          className="border rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent cursor-pointer"
         >
           <option value="All">All Categories</option>
           {CATEGORIES.map((cat) => (
@@ -53,56 +59,57 @@ export default function ExpenseList({
         </select>
       </div>
 
-      {/* Expense count */}
-      <p className="text-xs text-gray-400 mb-3">
-        Showing {filteredExpenses.length} of {expenses.length} expense
-        {expenses.length !== 1 ? "s" : ""}
-      </p>
-
       {/* Expense rows or empty state */}
-      <div>
+      <div className="divide-y divide-gray-50">
         {filteredExpenses.length === 0 ? (
-          <p className="text-gray-400 text-center py-8">
-            No expenses found
-            {filterCategory !== "All" ? ` in "${filterCategory}"` : ""}. Start
-            by adding one!
-          </p>
+          <div className="text-center py-14 px-5">
+            <div className="text-5xl mb-4 opacity-80">📋</div>
+            <p className="text-gray-500 font-medium text-base">
+              No expenses found
+              {filterCategory !== "All" ? ` in "${filterCategory}"` : ""}
+            </p>
+            <p className="text-gray-400 text-sm mt-1">
+              Add your first expense to get started!
+            </p>
+          </div>
         ) : (
           filteredExpenses.map((expense) => (
             <div
               key={expense.id}
-              className="border-b last:border-b-0 py-3 flex justify-between items-center"
+              className="px-5 py-4 flex justify-between items-center hover:bg-gray-50/70 transition-all duration-150"
             >
               {/* Left side: description, category, date */}
-              <div>
-                <p className="font-bold">{expense.description}</p>
-                <p className="text-sm text-gray-500">
-                  {expense.category} &middot; {formatDate(expense.date)}
+              <div className="min-w-0 mr-4">
+                <p className="font-semibold text-gray-800 truncate">{expense.description}</p>
+                <p className="text-sm text-gray-400 mt-0.5">
+                  <span className="font-medium text-gray-500">{expense.category}</span>
+                  {" "}&middot;{" "}
+                  {formatDate(expense.date)}
                 </p>
               </div>
 
               {/* Right side: amount and action buttons */}
-              <div className="flex items-center gap-3">
-                <span className="font-semibold text-lg">
+              <div className="flex items-center gap-4 shrink-0">
+                <span className="font-bold text-gray-800 text-lg tabular-nums">
                   ₱{expense.amount.toLocaleString()}
                 </span>
-                <div className="flex gap-2">
-                  {/* Edit button — wired for Ken's EditExpense component */}
+                <div className="flex gap-1.5">
+                  {/* Edit button */}
                   <button
                     onClick={() => onEdit(expense)}
-                    className="text-blue-500 hover:text-blue-700 text-sm px-2 py-1 rounded hover:bg-blue-50 transition-colors"
+                    className="text-blue-500 hover:text-white text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-blue-500 border border-transparent hover:border-blue-500 transition-all duration-150"
                     title="Edit expense"
                   >
                     Edit
                   </button>
-                  {/* Delete button — wired for Jebron's DeleteExpense component */}
+                  {/* Delete button */}
                   <button
                     onClick={() => {
                       if (window.confirm(`Delete "${expense.description}"?`)) {
                         onDelete(expense.id);
                       }
                     }}
-                    className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                    className="text-red-500 hover:text-white text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-red-500 border border-transparent hover:border-red-500 transition-all duration-150"
                     title="Delete expense"
                   >
                     Delete
