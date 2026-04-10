@@ -13,6 +13,7 @@ export default function EditExpenseModal({ expense, onSave, onDelete, onClose }:
 
   const [form, setForm] = useState({ category: '', amount: '', date: '', description: '' });
   const [errors, setErrors] = useState<Partial<typeof form>>({});
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     if (expense) {
@@ -22,6 +23,7 @@ export default function EditExpenseModal({ expense, onSave, onDelete, onClose }:
         date: expense.date,
         description: expense.description,
       });
+      setConfirmDelete(false);
     }
   }, [expense]);
   
@@ -56,6 +58,11 @@ export default function EditExpenseModal({ expense, onSave, onDelete, onClose }:
     });
   };
 
+  const handleDelete = () => {
+    onDelete(expense.id);
+    onClose();
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
@@ -73,7 +80,7 @@ export default function EditExpenseModal({ expense, onSave, onDelete, onClose }:
         </div>
 
         {/* Body */}
-        <div className="px-6 py-5 space-y-4">
+        {!confirmDelete ? ( 
           <div>
             <label className="block text-sm font-medium text-zinc-600 mb-1.5">Category</label>
             <select name="category" value={form.category} onChange={handleChange} className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 transition">
@@ -82,24 +89,58 @@ export default function EditExpenseModal({ expense, onSave, onDelete, onClose }:
               ))}
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1.5">Amount (₱)</label>
-            <input type="number" name="amount" value={form.amount} onChange={handleChange} min="0" step="0.01" className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1.5">Date</label>
-            <input type="date" name="date" value={form.date} onChange={handleChange} className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1.5">Description</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows={2} className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-400 transition" />
-          </div>
-        </div>
+          ) : (
+            <div className="px-6 py-5 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-600 mb-1.5">Amount (₱)</label>
+                <input type="number" name="amount" value={form.amount} onChange={handleChange} min="0" step="0.01" className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-600 mb-1.5">Date</label>
+                <input type="date" name="date" value={form.date} onChange={handleChange} className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-600 mb-1.5">Description</label>
+                <textarea name="description" value={form.description} onChange={handleChange} rows={2} className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-400 transition" />
+                {errors.amount && <p className="text-red-500">{errors.amount}</p>}
+              </div>
+            </div>
+    )}
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-zinc-100 flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-zinc-500 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition">Cancel</button>
-          <button onClick={handleSave} className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Save Changes</button>
+        <div className="px-6 py-4 border-t border-zinc-100 flex justify-between">
+          {!confirmDelete ? (
+            <>
+              {/* This Delete button is new */}
+              <button
+                onClick={() => setConfirmDelete(true)}
+                className="px-4 py-2 text-sm text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+              >
+                Delete
+              </button>
+              <div className="flex gap-2">
+                {/* Your existing Cancel and Save buttons go here */}
+                <button onClick={onClose} className="...">Cancel</button>
+                <button onClick={handleSave} className="...">Save Changes</button>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* These confirmation buttons are new */}
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="px-4 py-2 text-sm text-zinc-500 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition"
+              >
+                Keep It
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+              >
+                Yes, Delete
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
