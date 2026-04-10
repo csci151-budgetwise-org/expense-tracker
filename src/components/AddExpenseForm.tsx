@@ -47,6 +47,8 @@ export default function AddExpense({ onAdd }: AddExpenseProps) {
           <label className="block text-sm font-medium text-gray-600">Amount</label>
           <input
             type="number"
+            min="0.01"
+            step="0.01"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-blue-400 outline-none"
