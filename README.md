@@ -8,7 +8,7 @@ A personal finance management application that helps users track expenses, manag
 
 | Full Name | Role | GitHub Username | Assigned Atomic Task |
 |-----------|------|-----------------|---------------------|
-| Caballes, Ervin James | UI/UX Integrator | caballeservinjames889-maker |  |
+| Caballes, Ervin James | UI/UX Integrator | caballeservinjames889-maker | UI/UX Integrator and Budget Tracker |
 | Dejos, Pauline | Project Lead | repromantics01 | App Wiring & CategorySummary |
 | Jimeno, Ken Cedrick | QA Specialist | devcedrick | Form Validation |
 | Ortula, Jebron | Documentation Lead | Jebzzzzz | README.md Setup & EditExpense |
