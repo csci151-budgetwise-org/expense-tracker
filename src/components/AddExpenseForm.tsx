@@ -1,91 +1,112 @@
 import { useState } from 'react';
-import type { ExpenseItem } from '../types';
+import { type ExpenseItem, CATEGORIES } from '../types';
 
-interface AddExpenseProps {
-  onAdd: (expense: Omit<ExpenseItem, 'id'>) => void;
+interface AddExpenseFormProps {
+  onAddExpense: (expense: ExpenseItem) => void;
 }
 
-export default function AddExpense({ onAdd }: AddExpenseProps) {
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('Food');
-  const [date, setDate] = useState('');
+// Defining the initial state outside the component for easy resets
+const initialForm = {
+  category: 'Food',
+  amount: '',
+  date: new Date().toISOString().split('T')[0],
+  description: '',
+};
+
+export default function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
+  // Now using a single object to hold all form data
+  const [form, setForm] = useState(initialForm);
+
+  // A generic change handler that works for any input with a "name" attribute
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ 
+      ...prev, 
+      [name]: value 
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!description || !amount || !date) return;
 
-    onAdd({
-      description,
-      amount: parseFloat(amount),
-      category,
-      date,
+    // Mapping the object state to the final ExpenseItem type
+    onAddExpense({
+      id: crypto.randomUUID(), // Generating unique ID here
+      category: form.category,
+      amount: parseFloat(form.amount) || 0,
+      date: form.date,
+      description: form.description.trim(),
     });
 
-    setDescription('');
-    setAmount('');
-    setCategory('Food');
-    setDate('');
+    // Resetting the form using the initial object
+    setForm(initialForm);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border p-4 rounded bg-white shadow flex flex-col gap-3">
-      <h2 className="text-xl font-bold mb-2 text-gray-800">Add New Expense</h2>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-600">Description</label>
-        <input
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-blue-400 outline-none"
-        />
-      </div>
+    <div className="bg-white rounded-2xl shadow-sm border border-zinc-100 p-6">
+      <h2 className="text-lg font-semibold text-zinc-800 mb-5">Add Expense</h2>
 
-      <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Category */}
         <div>
-          <label className="block text-sm font-medium text-gray-600">Amount</label>
+          <label className="block text-sm font-medium text-zinc-600 mb-1.5">Category</label>
+          <select
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm bg-white"
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Amount */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-600 mb-1.5">Amount (₱)</label>
           <input
             type="number"
-            min="0.01"
-            step="0.01"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-blue-400 outline-none"
+            name="amount"
+            value={form.amount}
+            onChange={handleChange}
+            placeholder="0.00"
+            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm"
           />
         </div>
 
+        {/* Date */}
         <div>
-          <label className="block text-sm font-medium text-gray-600">Category</label>
-          <select 
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full border p-2 rounded mt-1 bg-white focus:ring-2 focus:ring-blue-400 outline-none"
-          >
-            <option value="Food">Food</option>
-            <option value="Transport">Transport</option>
-            <option value="Bills">Bills</option>
-            <option value="Shopping">Shopping</option>
-          </select>
+          <label className="block text-sm font-medium text-zinc-600 mb-1.5">Date</label>
+          <input
+            type="date"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm"
+          />
         </div>
-      </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-600">Date</label>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-blue-400 outline-none"
-        />
-      </div>
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-600 mb-1.5">Description</label>
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="What did you spend on?"
+            rows={2}
+            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm resize-none"
+          />
+        </div>
 
-      <button 
-        type="submit" 
-        className="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-600 transition-colors font-semibold"
-      >
-        Save Expense
-      </button>
-    </form>
+        <button
+          type="submit"
+          className="w-full py-2.5 px-4 bg-indigo-600 text-white text-sm font-medium rounded-lg"
+        >
+          Add Expense
+        </button>
+      </form>
+    </div>
   );
 }
