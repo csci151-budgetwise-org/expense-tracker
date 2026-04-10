@@ -19,7 +19,7 @@ export default function BudgetTracker({ expenses, budget, onSetBudget }: BudgetT
   const getBarColor = () => {
     if (pct >= 100) return 'bg-red-500';
     if (pct >= 80) return 'bg-orange-400';
-    if (pct >= 60) return 'bg-yellow-400';
+    if (pct >= 60) return 'bg-yellow-500';
     return 'bg-emerald-400';
   };
 
