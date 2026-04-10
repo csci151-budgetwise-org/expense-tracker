@@ -11,6 +11,9 @@ export default function BudgetTracker({ expenses, budget, onSetBudget }: BudgetT
   const [inputValue, setInputValue] = useState('');
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState('');
+  
+  const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const remaining = budget - totalSpent;
 
   const handleSave = () => {
     const val = parseFloat(inputValue);
@@ -63,9 +66,22 @@ export default function BudgetTracker({ expenses, budget, onSetBudget }: BudgetT
         </div>
       )}
 
-      {budget === 0 && (
-        <div className="py-8 text-center text-sm text-zinc-400">
-          No budget set. Click "Set Budget" to get started.
+      {budget > 0 && (
+        <div className="grid grid-cols-3 gap-3 mb-5">
+          <div className="text-center p-3 bg-zinc-50 rounded-xl">
+            <p className="text-xs text-zinc-400 mb-1">Budget</p>
+            <p className="text-sm font-semibold text-zinc-700">₱{budget.toLocaleString('en-PH')}</p>
+          </div>
+          <div className="text-center p-3 bg-zinc-50 rounded-xl">
+            <p className="text-xs text-zinc-400 mb-1">Spent</p>
+            <p className="text-sm font-semibold text-zinc-700">₱{totalSpent.toLocaleString('en-PH')}</p>
+          </div>
+          <div className="text-center p-3 bg-zinc-50 rounded-xl">
+            <p className="text-xs text-zinc-400 mb-1">Remaining</p>
+            <p className={`text-sm font-semibold ${remaining < 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+              ₱{Math.abs(remaining).toLocaleString('en-PH')}
+            </p>
+          </div>
         </div>
       )}
     </div>
