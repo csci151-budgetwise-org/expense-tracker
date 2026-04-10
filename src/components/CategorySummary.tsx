@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { ExpenseItem, CATEGORIES } from '../types';
+import type { ExpenseItem } from '../types';
 
 interface CategorySummaryProps {
   expenses: ExpenseItem[];
