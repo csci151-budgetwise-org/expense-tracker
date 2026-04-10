@@ -5,7 +5,6 @@ interface AddExpenseFormProps {
   onAddExpense: (expense: ExpenseItem) => void;
 }
 
-// Defining the initial state outside the component for easy resets
 const initialForm = {
   category: 'Food',
   amount: '',
@@ -14,47 +13,76 @@ const initialForm = {
 };
 
 export default function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
-  // Now using a single object to hold all form data
   const [form, setForm] = useState(initialForm);
+  
+  // NEW: State for tracking validation errors and submission success
+  const [errors, setErrors] = useState<Partial<typeof initialForm>>({});
+  const [submitted, setSubmitted] = useState(false);
 
-  // A generic change handler that works for any input with a "name" attribute
+  // NEW: Validation function to check business rules
+  const validate = () => {
+    const newErrors: Partial<typeof initialForm> = {};
+    if (!form.amount || isNaN(Number(form.amount)) || Number(form.amount) <= 0)
+      newErrors.amount = 'Enter a valid amount greater than 0';
+    if (!form.date) newErrors.date = 'Date is required';
+    if (!form.description.trim()) newErrors.description = 'Description is required';
+    return newErrors;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ 
-      ...prev, 
-      [name]: value 
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
+    
+    // NEW: Clear specific error when user starts typing again
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // NEW: Run validation before submitting
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
-    // Mapping the object state to the final ExpenseItem type
     onAddExpense({
-      id: crypto.randomUUID(), // Generating unique ID here
+      id: crypto.randomUUID(),
       category: form.category,
-      amount: parseFloat(form.amount) || 0,
+      amount: parseFloat(form.amount),
       date: form.date,
       description: form.description.trim(),
     });
 
-    // Resetting the form using the initial object
+    // NEW: Post-submission feedback loop
     setForm(initialForm);
+    setErrors({});
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 2000); // Hide success message after 2s
   };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-zinc-100 p-6">
       <h2 className="text-lg font-semibold text-zinc-800 mb-5">Add Expense</h2>
 
+      {/* NEW: Success Message UI */}
+      {submitted && (
+        <div className="mb-4 px-4 py-2.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-lg">
+          Expense added successfully!
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Category */}
         <div>
           <label className="block text-sm font-medium text-zinc-600 mb-1.5">Category</label>
           <select
             name="category"
             value={form.category}
             onChange={handleChange}
-            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm bg-white"
+            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm bg-white focus:outline-none"
           >
             {CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>{cat}</option>
@@ -62,7 +90,6 @@ export default function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
           </select>
         </div>
 
-        {/* Amount */}
         <div>
           <label className="block text-sm font-medium text-zinc-600 mb-1.5">Amount (₱)</label>
           <input
@@ -71,11 +98,12 @@ export default function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
             value={form.amount}
             onChange={handleChange}
             placeholder="0.00"
-            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm"
+            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm focus:outline-none"
           />
+          {/* NEW: Display Error Message */}
+          {errors.amount && <p className="mt-1 text-xs text-red-500">{errors.amount}</p>}
         </div>
 
-        {/* Date */}
         <div>
           <label className="block text-sm font-medium text-zinc-600 mb-1.5">Date</label>
           <input
@@ -83,11 +111,11 @@ export default function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
             name="date"
             value={form.date}
             onChange={handleChange}
-            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm"
+            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm focus:outline-none"
           />
+          {errors.date && <p className="mt-1 text-xs text-red-500">{errors.date}</p>}
         </div>
 
-        {/* Description */}
         <div>
           <label className="block text-sm font-medium text-zinc-600 mb-1.5">Description</label>
           <textarea
@@ -96,13 +124,14 @@ export default function AddExpenseForm({ onAddExpense }: AddExpenseFormProps) {
             onChange={handleChange}
             placeholder="What did you spend on?"
             rows={2}
-            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm resize-none"
+            className="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-zinc-800 text-sm resize-none focus:outline-none"
           />
+          {errors.description && <p className="mt-1 text-xs text-red-500">{errors.description}</p>}
         </div>
 
         <button
           type="submit"
-          className="w-full py-2.5 px-4 bg-indigo-600 text-white text-sm font-medium rounded-lg"
+          className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition"
         >
           Add Expense
         </button>
