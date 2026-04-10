@@ -83,25 +83,10 @@ A personal finance management application that helps users track expenses, manag
 - **`feature/expense-filter`** - Creation of the main expense list view with capabilities to display all records and filter them by specific categories (e.g., Food, Transport, Bills).
 - **`feature/edit-delete`** - Integration of the ability to modify existing expense details and a safe deletion flow that includes a user confirmation prompt.
 
-### Merge Conflicts Resolved
-![alt text](src/assets/conflict1.png)
-
-[cite_start]Here is a description of merge conflicts and how they were resolved, formatted specifically for your README documentation requirements[cite: 259].
-
-### What is a Merge Conflict?
-A merge conflict occurs when Git is unable to automatically combine changes from two different branches. [cite_start]This usually happens when two developers edit the same lines in the same file, or if one developer deletes a file while another modifies it[cite: 88]. [cite_start]When this happens, Git pauses the merge process and injects conflict markers (e.g., `<<<<<<<< HEAD`, `=======`, `>>>>>>>>`) into the affected files, requiring a developer to manually choose which code to keep[cite: 89, 91, 93].
-
-### Standard Resolution Process
-[cite_start]According to our team's Git Rules[cite: 87], we follow these steps to resolve conflicts:
-1. [cite_start]**Understand Intent:** Read both versions of the code to understand the purpose behind each change[cite: 95].
-2. [cite_start]**Manually Edit:** Edit the file to reflect the correct final state[cite: 96].
-3. [cite_start]**Clean Up:** Remove all Git conflict markers (`<<<<<<<<`, `=======`, `>>>>>>>>`)[cite: 97, 100].
-4. [cite_start]**Stage:** Run `git add <file>` to stage the resolved file[cite: 98].
-5. [cite_start]**Commit:** Commit the resolution to finalize the merge[cite: 99].
-
----
 
 ### Documented Merge Conflicts
+
+![alt text](src/assets/conflict1.png)
 
 #### Conflict 1: Styling Updates in BudgetTracker
 * **File:** `src/components/BudgetTracker.tsx`
